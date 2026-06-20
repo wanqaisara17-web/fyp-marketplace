@@ -1,10 +1,9 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import '../cores/config/app_config.dart';
 
 class ApiService {
-  // Replace with your Computer's IPv4 address (e.g., 192.168.1.10)
-  // Run 'ipconfig' in your terminal to find it.
-  static const String baseUrl = "http://127.0.0.1:8080/demo";
+  static String get baseUrl => AppConfig.apiBaseUrl;
 
   // 1. Register User
   static Future<Map<String, dynamic>> register(
@@ -16,7 +15,7 @@ class ApiService {
         Uri.parse("$baseUrl/register.php"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({"email": email, "password": password}),
-      );
+      ).timeout(const Duration(seconds: 10));
       return jsonDecode(response.body);
     } catch (e) {
       return {"success": false, "message": "Connection error: $e"};
@@ -33,7 +32,7 @@ class ApiService {
         Uri.parse("$baseUrl/login.php"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({"email": email, "password": password}),
-      );
+      ).timeout(const Duration(seconds: 10));
       return jsonDecode(response.body);
     } catch (e) {
       return {"success": false, "message": "Connection error: $e"};
@@ -50,7 +49,7 @@ class ApiService {
         Uri.parse("$baseUrl/verify_otp.php"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({"email": email, "otp": otp}),
-      );
+      ).timeout(const Duration(seconds: 10));
       return jsonDecode(response.body);
     } catch (e) {
       return {"success": false, "message": "Connection error: $e"};

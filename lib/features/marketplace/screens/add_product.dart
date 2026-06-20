@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../cores/config/app_config.dart';
 import '../models/item_model.dart';
 import '../providers/marketplace_provider.dart';
 
@@ -37,7 +38,7 @@ class _AddProductPageState extends State<AddProductPage> {
         final description = _descriptionController.text;
 
         final response = await http.post(
-          Uri.parse("http://127.0.0.1:8080/demo/add_item.php"),
+          Uri.parse("${AppConfig.apiBaseUrl}/add_item.php"),
           headers: {"Content-Type": "application/json"},
           body: jsonEncode({
             "item_name": itemName,
@@ -45,7 +46,7 @@ class _AddProductPageState extends State<AddProductPage> {
             "description": description,
             "category": selectedCategory,
           }),
-        );
+        ).timeout(const Duration(seconds: 10));
 
         final data = jsonDecode(response.body);
 

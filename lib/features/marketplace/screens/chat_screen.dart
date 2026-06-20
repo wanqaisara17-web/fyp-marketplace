@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import '../../../cores/config/app_config.dart';
 import '../models/chat_message_model.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -27,7 +28,7 @@ class _ChatScreenState extends State<ChatScreen> {
   List<ChatMessage> _messages = [];
   bool _isLoading = false;
 
-  final String baseUrl = "http://127.0.0.1:8080/demo";
+  String get baseUrl => AppConfig.apiBaseUrl;
 
   @override
   void initState() {
@@ -41,7 +42,7 @@ class _ChatScreenState extends State<ChatScreen> {
     try {
       final response = await http.get(
         Uri.parse("$baseUrl/get_message.php?item_id=${widget.itemId}"),
-      );
+      ).timeout(const Duration(seconds: 10));
 
       final data = jsonDecode(response.body);
 
@@ -76,7 +77,7 @@ class _ChatScreenState extends State<ChatScreen> {
           "receiver_id": receiverId,
           "message": message.trim(),
         }),
-      );
+      ).timeout(const Duration(seconds: 10));
 
       final data = jsonDecode(response.body);
 

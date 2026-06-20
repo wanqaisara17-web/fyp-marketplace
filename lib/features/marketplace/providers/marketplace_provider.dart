@@ -1,10 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import '../../../cores/config/app_config.dart';
 import '../models/item_model.dart';
 
 class MarketplaceProvider extends ChangeNotifier {
-  static const String baseUrl = "http://127.0.0.1:8080/demo";
+  static String get baseUrl => AppConfig.apiBaseUrl;
 
   List<Item> _items = [];
   List<Item> _latestItems = [];
@@ -35,23 +36,17 @@ class MarketplaceProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final latestResponse = await http.get(
-        Uri.parse("$baseUrl/get_latest_item.php"),
-      );
+      final allResponse = await http
+          .get(Uri.parse("$baseUrl/get_item.php"))
+          .timeout(const Duration(seconds: 10));
 
-      final allResponse = await http.get(Uri.parse("$baseUrl/get_item.php"));
-
-      final latestData = jsonDecode(latestResponse.body);
       final allData = jsonDecode(allResponse.body);
 
-      if (latestData["success"] == true && allData["success"] == true) {
-        _latestItems = (latestData["items"] as List)
-            .map((itemJson) => _itemFromJson(itemJson))
-            .toList();
-
+      if (allData["success"] == true) {
         _items = (allData["items"] as List)
             .map((itemJson) => _itemFromJson(itemJson))
             .toList();
+        _latestItems = _items.take(10).toList();
       } else {
         _error = "Failed to load items";
       }

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import '../../../cores/config/app_config.dart';
 import 'chat_screen.dart';
 
 class ChatListPage extends StatefulWidget {
@@ -11,7 +12,7 @@ class ChatListPage extends StatefulWidget {
 }
 
 class _ChatListPageState extends State<ChatListPage> {
-  final String baseUrl = "http://127.0.0.1:8080/demo";
+  String get baseUrl => AppConfig.apiBaseUrl;
 
   // Demo current user for now.
   // User 2 = buyer
@@ -37,7 +38,7 @@ class _ChatListPageState extends State<ChatListPage> {
     try {
       final response = await http.get(
         Uri.parse("$baseUrl/get_chat_list.php?user_id=$currentUserId"),
-      );
+      ).timeout(const Duration(seconds: 10));
 
       final data = jsonDecode(response.body);
 
